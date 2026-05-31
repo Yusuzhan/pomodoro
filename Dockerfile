@@ -5,7 +5,7 @@ COPY mobile/ .
 RUN flutter build web --release
 
 # Stage 2: Build Go server
-FROM golang:1.22-alpine AS go-builder
+FROM golang:1.26-alpine AS go-builder
 WORKDIR /app
 COPY server/ .
 COPY --from=flutter-builder /app/build/web ./cmd/server/web/dist
