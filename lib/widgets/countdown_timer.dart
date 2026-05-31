@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pomodoro_flutter/constants/app_colors.dart';
+import 'package:pomodoro_flutter/constants/timer_constants.dart';
 import 'package:pomodoro_flutter/models/timer_type.dart';
 import 'package:pomodoro_flutter/widgets/lcd_digits.dart';
-
-const _FOCUS = 25 * 60;
-const _BREAK = 5 * 60;
-const _REST = 15 * 60;
 
 class CountdownTimer extends StatefulWidget {
   const CountdownTimer({super.key});
@@ -17,18 +14,18 @@ class CountdownTimer extends StatefulWidget {
 
 class _CountdownTimerState extends State<CountdownTimer> {
   Timer? _timer;
-  int _timeLeft = _FOCUS;
+  int _timeLeft = focusDuration;
   bool _isRunning = false;
   TimerType _currentType = TimerType.tfocus;
 
   int get _totalTime {
     switch (_currentType) {
       case TimerType.tfocus:
-        return _FOCUS;
+        return focusDuration;
       case TimerType.tbreak:
-        return _BREAK;
+        return breakDuration;
       case TimerType.trest:
-        return _REST;
+        return restDuration;
     }
   }
 
