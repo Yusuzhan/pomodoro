@@ -1,0 +1,13 @@
+.git/
+.dart_tool/
+.idea/
+.pub/
+mobile/android/
+mobile/build/
+mobile/ios/
+mobile/linux/
+mobile/macos/
+mobile/test/
+mobile/windows/
+*.iml
+*.lock
