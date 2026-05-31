@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:pomodoro_flutter/models/timer_type.dart';
 import 'package:pomodoro_flutter/widgets/lcd_digits.dart';
 
 const _FOCUS = 25 * 60;
 const _BREAK = 5 * 60;
 const _REST = 15 * 60;
-
-enum TimerType { tfocus, tbreak, trest }
 
 const _bodyColor = Color(0xFF1A1A1A);
 const _bezelColor = Color(0xFF2A2A2A);
