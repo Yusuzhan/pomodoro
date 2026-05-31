@@ -49,9 +49,17 @@ class _CountdownTimerState extends State<CountdownTimer> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(child: CircularProgress(progress: 0.3)),
-          SizedBox(height: 24),
-          Text(toTime(_timeLeft)),
+          SizedBox(height: 80),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              CircularProgress(progress: _timeLeft / _DEFAULT_TIMER),
+              Text(
+                toTime(_timeLeft),
+                style: TextStyle(fontSize: 48, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
           SizedBox(height: 24),
           IconButton(
             icon: Icon(_isRunning ? Icons.pause : Icons.play_arrow),
