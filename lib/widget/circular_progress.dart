@@ -25,8 +25,8 @@ class _CircularProgressPainter extends CustomPainter {
     final progressPaint = Paint()
       ..color = Colors.red.shade400
       ..style = PaintingStyle.stroke
-      ..strokeWidth = _stokeWidth
-      ..strokeCap = StrokeCap.butt;
+      ..strokeWidth = _stokeWidth - 6
+      ..strokeCap = StrokeCap.round;
 
     final startAngle = pi / 2;
     final sweepAngle = 2 * pi * progress;
