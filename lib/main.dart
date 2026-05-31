@@ -37,12 +37,7 @@ class _MyHomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Container(
-          // color: Colors.green,
-          child: SizedBox(width: 200, child: CountdownTimer()),
-        ),
-      ),
+      body: Center(child: CountdownTimer()),
     );
   }
 }
