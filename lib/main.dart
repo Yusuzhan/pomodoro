@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pomodoro_flutter/widget/countdown_timer.dart';
+import 'package:pomodoro_flutter/widgets/countdown_timer.dart';
 
 void main() {
   runApp(const PomodoroApp());
