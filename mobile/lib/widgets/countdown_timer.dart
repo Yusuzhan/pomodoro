@@ -80,17 +80,18 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildBrand(),
-        const SizedBox(height: 24),
-        _buildModeIndicators(),
-        const SizedBox(height: 12),
-        _buildWatchFace(),
-        const SizedBox(height: 24),
-        _buildControls(),
-      ],
+    return SizedBox(
+      width: 500,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildBrand(),
+          const SizedBox(height: 24),
+          _buildWatchFace(),
+          const SizedBox(height: 8),
+          _buildControls(),
+        ],
+      ),
     );
   }
 
@@ -126,9 +127,9 @@ class _CountdownTimerState extends State<CountdownTimer> {
       child: Text(
         label,
         style: TextStyle(
-          fontSize: 10,
+          fontSize: 12,
           letterSpacing: 2,
-          fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+          fontWeight: selected ? FontWeight.w900 : FontWeight.w400,
           color: selected ? onColor : Colors.white.withValues(alpha: 0.2),
         ),
       ),
@@ -137,16 +138,15 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
   Widget _buildWatchFace() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 32),
       decoration: BoxDecoration(
         color: bodyColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: bezelColor, width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: Colors.white.withValues(alpha: 0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 0),
           ),
         ],
       ),
@@ -165,9 +165,13 @@ class _CountdownTimerState extends State<CountdownTimer> {
           children: [
             _buildProgressBar(),
             const SizedBox(height: 12),
-            _buildLcdTime(),
-            const SizedBox(height: 4),
-            _buildBottomLabel(),
+            Row(
+              children: [
+                _buildLcdTime(),
+                SizedBox(width: 24),
+                _buildModeIndicators(),
+              ],
+            ),
           ],
         ),
       ),
@@ -225,38 +229,26 @@ class _CountdownTimerState extends State<CountdownTimer> {
     );
   }
 
-  Widget _buildBottomLabel() {
-    final label = _currentType == TimerType.tfocus
-        ? 'FOCUS'
-        : _currentType == TimerType.tbreak
-        ? 'BREAK'
-        : 'REST';
-    return Text(
-      label,
-      style: TextStyle(
-        fontSize: 9,
-        letterSpacing: 3,
-        color: onColor.withValues(alpha: 0.5),
-      ),
-    );
-  }
-
   Widget _buildControls() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _watchButton(
-          icon: _isRunning ? Icons.pause : Icons.play_arrow,
-          onTap: () {
-            if (_isRunning) {
-              _pauseCountdown();
-            } else {
-              _startCountdown();
-            }
-          },
+        Expanded(
+          child: _watchButton(
+            icon: _isRunning ? Icons.pause : Icons.play_arrow,
+            onTap: () {
+              if (_isRunning) {
+                _pauseCountdown();
+              } else {
+                _startCountdown();
+              }
+            },
+          ),
         ),
-        const SizedBox(width: 40),
-        _watchButton(icon: Icons.replay_outlined, onTap: _resetTimer),
+        const SizedBox(width: 4),
+        Expanded(
+          child: _watchButton(icon: Icons.replay_outlined, onTap: _resetTimer),
+        ),
       ],
     );
   }
@@ -265,11 +257,10 @@ class _CountdownTimerState extends State<CountdownTimer> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 52,
-        height: 28,
+        height: 38,
         decoration: BoxDecoration(
           color: bezelColor,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: Colors.black.withValues(alpha: 0.5),
             width: 1.5,
