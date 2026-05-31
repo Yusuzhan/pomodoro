@@ -1,17 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:pomodoro_flutter/constants/app_colors.dart';
 import 'package:pomodoro_flutter/models/timer_type.dart';
 import 'package:pomodoro_flutter/widgets/lcd_digits.dart';
 
 const _FOCUS = 25 * 60;
 const _BREAK = 5 * 60;
 const _REST = 15 * 60;
-
-const _bodyColor = Color(0xFF1A1A1A);
-const _bezelColor = Color(0xFF2A2A2A);
-const _screenColor = Color(0xFF0F1A24);
-const _onColor = Color(0xFF9DB8CC);
-const _offColor = Color(0xFF172230);
 
 class CountdownTimer extends StatefulWidget {
   const CountdownTimer({super.key});
@@ -137,7 +132,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
           fontSize: 10,
           letterSpacing: 2,
           fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
-          color: selected ? _onColor : Colors.white.withValues(alpha: 0.2),
+          color: selected ? onColor : Colors.white.withValues(alpha: 0.2),
         ),
       ),
     );
@@ -147,9 +142,9 @@ class _CountdownTimerState extends State<CountdownTimer> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 32),
       decoration: BoxDecoration(
-        color: _bodyColor,
+        color: bodyColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bezelColor, width: 2),
+        border: Border.all(color: bezelColor, width: 2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.4),
@@ -161,7 +156,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
       padding: const EdgeInsets.all(12),
       child: Container(
         decoration: BoxDecoration(
-          color: _screenColor,
+          color: screenColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: Colors.black.withValues(alpha: 0.3),
@@ -196,8 +191,8 @@ class _CountdownTimerState extends State<CountdownTimer> {
                 margin: const EdgeInsets.symmetric(horizontal: 1),
                 decoration: BoxDecoration(
                   color: filled
-                      ? _onColor.withValues(alpha: 0.7)
-                      : _offColor.withValues(alpha: 0.5),
+                      ? onColor.withValues(alpha: 0.7)
+                      : offColor.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(1),
                 ),
               ),
@@ -244,7 +239,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
       style: TextStyle(
         fontSize: 9,
         letterSpacing: 3,
-        color: _onColor.withValues(alpha: 0.5),
+        color: onColor.withValues(alpha: 0.5),
       ),
     );
   }
@@ -276,7 +271,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
         width: 52,
         height: 28,
         decoration: BoxDecoration(
-          color: _bezelColor,
+          color: bezelColor,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: Colors.black.withValues(alpha: 0.5),
@@ -284,7 +279,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
           ),
         ),
         child: Center(
-          child: Icon(icon, color: _onColor.withValues(alpha: 0.7), size: 18),
+          child: Icon(icon, color: onColor.withValues(alpha: 0.7), size: 18),
         ),
       ),
     );

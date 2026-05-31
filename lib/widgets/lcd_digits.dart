@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-const _onColor = Color(0xFF9DB8CC);
-const _offColor = Color(0xFF172230);
+import 'package:pomodoro_flutter/constants/app_colors.dart';
 
 class LcdDigit extends StatelessWidget {
   final int digit;
@@ -41,7 +39,7 @@ class _LcdColonPainter extends CustomPainter {
     final corner = pw * 0.3;
 
     final paint = Paint()
-      ..color = _onColor
+      ..color = onColor
       ..style = PaintingStyle.fill;
 
     canvas.drawRRect(
@@ -104,7 +102,7 @@ class _LcdPainter extends CustomPainter {
     for (var i = 0; i < 7; i++) {
       final r = _rects[i];
       final paint = Paint()
-        ..color = segs[i] == 1 ? _onColor : _offColor
+        ..color = segs[i] == 1 ? onColor : offColor
         ..style = PaintingStyle.fill;
 
       canvas.drawRRect(
