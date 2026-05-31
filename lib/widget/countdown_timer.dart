@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:ui' show ImageFilter;
-
 import 'package:flutter/material.dart';
 import 'package:pomodoro_flutter/widget/circular_progress.dart';
 
@@ -10,9 +8,11 @@ const _REST = 15 * 60;
 
 enum TimerType { tfocus, tbreak, trest }
 
-const _glowColor = Color(0xFF00E5FF);
-const _glassBg = Color(0x1AFFFFFF);
-const _glassBorder = Color(0x33FFFFFF);
+const _bodyColor = Color(0xFF1A1A1A);
+const _bezelColor = Color(0xFF2A2A2A);
+const _screenColor = Color(0xFF0F1A24);
+const _onColor = Color(0xFF9DB8CC);
+const _offColor = Color(0xFF172230);
 
 class CountdownTimer extends StatefulWidget {
   const CountdownTimer({super.key});
@@ -60,6 +60,15 @@ class _CountdownTimerState extends State<CountdownTimer> {
     setState(() => _isRunning = false);
   }
 
+  void _resetTimer() {
+    _timer?.cancel();
+    _timer = null;
+    setState(() {
+      _timeLeft = _totalTime;
+      _isRunning = false;
+    });
+  }
+
   void _selectTimer(TimerType type) {
     if (_isRunning) {
       _timer?.cancel();
@@ -83,175 +92,207 @@ class _CountdownTimerState extends State<CountdownTimer> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Spacer(flex: 2),
-        _buildModeSelector(),
-        const Spacer(flex: 1),
-        _buildTimerDisplay(),
-        const Spacer(flex: 1),
-        _buildPlayButton(),
-        const Spacer(flex: 3),
+        _buildBrand(),
+        const SizedBox(height: 24),
+        _buildModeIndicators(),
+        const SizedBox(height: 12),
+        _buildWatchFace(),
+        const SizedBox(height: 24),
+        _buildControls(),
       ],
     );
   }
 
-  Widget _buildModeSelector() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          decoration: BoxDecoration(
-            color: _glassBg,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: _glassBorder, width: 0.5),
-          ),
-          padding: const EdgeInsets.all(4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildModeButton('FOCUS', TimerType.tfocus),
-              const SizedBox(width: 2),
-              _buildModeButton('BREAK', TimerType.tbreak),
-              const SizedBox(width: 2),
-              _buildModeButton('REST', TimerType.trest),
-            ],
-          ),
-        ),
+  Widget _buildBrand() {
+    return Text(
+      'POMODORO',
+      style: TextStyle(
+        fontSize: 10,
+        letterSpacing: 4,
+        fontWeight: FontWeight.w400,
+        color: Colors.white.withValues(alpha: 0.25),
       ),
     );
   }
 
-  Widget _buildModeButton(String label, TimerType type) {
+  Widget _buildModeIndicators() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _modeIndicator('FOCUS', TimerType.tfocus),
+        const SizedBox(width: 16),
+        _modeIndicator('BREAK', TimerType.tbreak),
+        const SizedBox(width: 16),
+        _modeIndicator('REST', TimerType.trest),
+      ],
+    );
+  }
+
+  Widget _modeIndicator(String label, TimerType type) {
     final selected = _currentType == type;
     return GestureDetector(
       onTap: () => _selectTimer(type),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10,
+          letterSpacing: 2,
+          fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
           color: selected
-              ? _glowColor.withValues(alpha: 0.15)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: selected
-                ? _glowColor.withValues(alpha: 0.5)
-                : Colors.transparent,
-            width: 0.5,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 2.5,
-            color: selected ? _glowColor : Colors.white.withValues(alpha: 0.5),
-          ),
+              ? _onColor
+              : Colors.white.withValues(alpha: 0.2),
         ),
       ),
     );
   }
 
-  Widget _buildTimerDisplay() {
-    return Column(
-      children: [
-        Stack(
-          alignment: Alignment.center,
+  Widget _buildWatchFace() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 32),
+      decoration: BoxDecoration(
+        color: _bodyColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _bezelColor, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: _screenColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Colors.black.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+        child: Column(
           children: [
-            CircularProgress(progress: _timeLeft / _totalTime),
-            _buildGlowText(),
+            _buildProgressBar(),
+            const SizedBox(height: 12),
+            _buildLcdTime(),
+            const SizedBox(height: 4),
+            _buildBottomLabel(),
           ],
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildGlowText() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
+  Widget _buildProgressBar() {
+    final progress = _timeLeft / _totalTime;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(1),
+      child: SizedBox(
+        height: 4,
+        child: Row(
+          children: List.generate(20, (i) {
+            final filled = i / 20 < progress;
+            return Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 1),
+                decoration: BoxDecoration(
+                  color: filled
+                      ? _onColor.withValues(alpha: 0.7)
+                      : _offColor.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLcdTime() {
+    final min = (_timeLeft / 60).toInt();
+    final sec = _timeLeft % 60;
+    final m1 = min ~/ 10;
+    final m2 = min % 10;
+    final s1 = sec ~/ 10;
+    final s2 = sec % 10;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          toTime(_timeLeft),
-          style: TextStyle(
-            fontSize: 60,
-            fontWeight: FontWeight.w200,
-            letterSpacing: 6,
-            color: _glowColor,
-            fontFamily: 'monospace',
-            shadows: [
-              Shadow(color: _glowColor.withValues(alpha: 0.8), blurRadius: 20),
-              Shadow(color: _glowColor.withValues(alpha: 0.5), blurRadius: 40),
-              Shadow(color: _glowColor.withValues(alpha: 0.3), blurRadius: 80),
-            ],
-          ),
+        LcdDigit(digit: m1, size: 28),
+        const SizedBox(width: 2),
+        LcdDigit(digit: m2, size: 28),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: LcdColon(size: 6),
         ),
-        const SizedBox(height: 4),
-        Text(
-          _currentType == TimerType.tfocus
-              ? 'FOCUS'
-              : _currentType == TimerType.tbreak
-              ? 'BREAK'
-              : 'REST',
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w300,
-            letterSpacing: 4,
-            color: Colors.white.withValues(alpha: 0.3),
-          ),
+        LcdDigit(digit: s1, size: 28),
+        const SizedBox(width: 2),
+        LcdDigit(digit: s2, size: 28),
+      ],
+    );
+  }
+
+  Widget _buildBottomLabel() {
+    final label = _currentType == TimerType.tfocus
+        ? 'FOCUS'
+        : _currentType == TimerType.tbreak
+            ? 'BREAK'
+            : 'REST';
+    return Text(
+      label,
+      style: TextStyle(
+        fontSize: 9,
+        letterSpacing: 3,
+        color: _onColor.withValues(alpha: 0.5),
+      ),
+    );
+  }
+
+  Widget _buildControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _watchButton(
+          icon: _isRunning ? Icons.pause : Icons.play_arrow,
+          onTap: () {
+            if (_isRunning) {
+              _pauseCountdown();
+            } else {
+              _startCountdown();
+            }
+          },
+        ),
+        const SizedBox(width: 40),
+        _watchButton(
+          icon: Icons.replay_outlined,
+          onTap: _resetTimer,
         ),
       ],
     );
   }
 
-  Widget _buildPlayButton() {
+  Widget _watchButton({required IconData icon, required VoidCallback onTap}) {
     return GestureDetector(
-      onTap: () {
-        if (_isRunning) {
-          _pauseCountdown();
-        } else {
-          _startCountdown();
-        }
-      },
+      onTap: onTap,
       child: Container(
-        width: 64,
-        height: 64,
+        width: 52,
+        height: 28,
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: _glowColor.withValues(alpha: 0.1),
+          color: _bezelColor,
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: _glowColor.withValues(alpha: 0.4),
+            color: Colors.black.withValues(alpha: 0.5),
             width: 1.5,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: _glowColor.withValues(alpha: 0.2),
-              blurRadius: 20,
-              spreadRadius: 2,
-            ),
-          ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-            child: Center(
-              child: Icon(
-                _isRunning ? Icons.pause : Icons.play_arrow,
-                color: _glowColor,
-                size: 32,
-              ),
-            ),
-          ),
+        child: Center(
+          child: Icon(icon, color: _onColor.withValues(alpha: 0.7), size: 18),
         ),
       ),
     );
   }
-}
-
-String toTime(int seconds) {
-  final min = (seconds / 60).toInt();
-  final sec = seconds % 60;
-  String addZero(int n) => n < 10 ? "0$n" : "$n";
-  return "${addZero(min)}:${addZero(sec)}";
 }

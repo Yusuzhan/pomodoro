@@ -1,99 +1,103 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 
-class _CircularProgressPainter extends CustomPainter {
-  final double progress;
+const _onColor = Color(0xFF9DB8CC);
+const _offColor = Color(0xFF172230);
 
-  _CircularProgressPainter({required this.progress});
+class LcdDigit extends StatelessWidget {
+  final int digit;
+  final double size;
 
-  @override
-  void paint(Canvas canvas, Size sz) {
-    final c = Offset(sz.width / 2, sz.height / 2);
-    final outerR = min(sz.width, sz.height) / 2 - 4;
-
-    final glowPaint = Paint()
-      ..color = const Color(0x3300E5FF)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6;
-
-    canvas.drawCircle(c, outerR, glowPaint);
-
-    final bgPaint = Paint()
-      ..shader = SweepGradient(
-        startAngle: 0,
-        endAngle: pi * 2,
-        colors: [
-          Colors.white.withValues(alpha: 0.08),
-          Colors.white.withValues(alpha: 0.03),
-          Colors.white.withValues(alpha: 0.08),
-          Colors.white.withValues(alpha: 0.02),
-          Colors.white.withValues(alpha: 0.08),
-        ],
-      ).createShader(Rect.fromCircle(center: c, radius: outerR + 6))
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5;
-
-    canvas.drawCircle(c, outerR, bgPaint);
-
-    final progressPaint = Paint()
-      ..shader = SweepGradient(
-        startAngle: -pi / 2,
-        endAngle: -pi / 2 + 2 * pi * progress,
-        colors: [
-          const Color(0xFF00E5FF),
-          const Color(0xFF0077FF),
-          const Color(0xFF00E5FF),
-        ],
-        stops: const [0.0, 0.5, 1.0],
-      ).createShader(Rect.fromCircle(center: c, radius: outerR + 6))
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round;
-
-    final startAngle = -pi / 2;
-    final sweepAngle = 2 * pi * progress;
-
-    if (progress > 0) {
-      canvas.drawArc(
-        Rect.fromCircle(center: c, radius: outerR),
-        startAngle,
-        sweepAngle,
-        false,
-        progressPaint,
-      );
-    }
-
-    final highlightPaint = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(-0.35, -0.35),
-        radius: 0.8,
-        colors: [
-          Colors.white.withValues(alpha: 0.15),
-          Colors.transparent,
-          Colors.transparent,
-        ],
-        stops: const [0.0, 0.3, 1.0],
-      ).createShader(Rect.fromLTWH(0, 0, sz.width, sz.height));
-
-    canvas.drawCircle(c, outerR, highlightPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _CircularProgressPainter oldDelegate) {
-    return oldDelegate.progress != progress;
-  }
-}
-
-class CircularProgress extends StatelessWidget {
-  final double progress;
-  const CircularProgress({super.key, required this.progress});
+  const LcdDigit({super.key, required this.digit, this.size = 36});
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: const Size(240, 240),
-      painter: _CircularProgressPainter(progress: progress),
+      size: Size(size, size * 1.6),
+      painter: _LcdPainter(digit: digit),
     );
   }
+}
+
+class LcdColon extends StatelessWidget {
+  final double size;
+  const LcdColon({super.key, this.size = 8});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: size * 0.5,
+            height: size * 0.5,
+            decoration: const BoxDecoration(color: _onColor, shape: BoxShape.circle),
+          ),
+          SizedBox(height: size * 0.5),
+          Container(
+            width: size * 0.5,
+            height: size * 0.5,
+            decoration: const BoxDecoration(color: _onColor, shape: BoxShape.circle),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LcdPainter extends CustomPainter {
+  final int digit;
+
+  _LcdPainter({required this.digit});
+
+  static const _segments = {
+    0: [1, 1, 1, 1, 1, 1, 0],
+    1: [0, 1, 1, 0, 0, 0, 0],
+    2: [1, 1, 0, 1, 1, 0, 1],
+    3: [1, 1, 1, 1, 0, 0, 1],
+    4: [0, 1, 1, 0, 0, 1, 1],
+    5: [1, 0, 1, 1, 0, 1, 1],
+    6: [1, 0, 1, 1, 1, 1, 1],
+    7: [1, 1, 1, 0, 0, 0, 0],
+    8: [1, 1, 1, 1, 1, 1, 1],
+    9: [1, 1, 1, 1, 0, 1, 1],
+  };
+
+  // [left, top, width, height] as fractions of total size
+  static const _rects = [
+    [0.18, 0.04, 0.64, 0.10], // a
+    [0.80, 0.12, 0.16, 0.36], // b
+    [0.80, 0.52, 0.16, 0.36], // c
+    [0.18, 0.86, 0.64, 0.10], // d
+    [0.04, 0.52, 0.16, 0.36], // e
+    [0.04, 0.12, 0.16, 0.36], // f
+    [0.18, 0.46, 0.64, 0.10], // g
+  ];
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final segs = _segments[digit] ?? _segments[0]!;
+    final w = size.width;
+    final h = size.height;
+    final corner = w * 0.12;
+
+    for (var i = 0; i < 7; i++) {
+      final r = _rects[i];
+      final paint = Paint()
+        ..color = segs[i] == 1 ? _onColor : _offColor
+        ..style = PaintingStyle.fill;
+
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(r[0] * w, r[1] * h, r[2] * w, r[3] * h),
+          Radius.circular(corner),
+        ),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _LcdPainter old) => old.digit != digit;
 }
