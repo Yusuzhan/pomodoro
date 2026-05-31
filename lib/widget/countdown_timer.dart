@@ -138,9 +138,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
           fontSize: 10,
           letterSpacing: 2,
           fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
-          color: selected
-              ? _onColor
-              : Colors.white.withValues(alpha: 0.2),
+          color: selected ? _onColor : Colors.white.withValues(alpha: 0.2),
         ),
       ),
     );
@@ -226,8 +224,8 @@ class _CountdownTimerState extends State<CountdownTimer> {
         const SizedBox(width: 2),
         LcdDigit(digit: m2, size: 28),
         Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: LcdColon(size: 6),
+          padding: const EdgeInsets.only(bottom: 0),
+          child: LcdColon(size: 8),
         ),
         LcdDigit(digit: s1, size: 28),
         const SizedBox(width: 2),
@@ -240,8 +238,8 @@ class _CountdownTimerState extends State<CountdownTimer> {
     final label = _currentType == TimerType.tfocus
         ? 'FOCUS'
         : _currentType == TimerType.tbreak
-            ? 'BREAK'
-            : 'REST';
+        ? 'BREAK'
+        : 'REST';
     return Text(
       label,
       style: TextStyle(
@@ -267,10 +265,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
           },
         ),
         const SizedBox(width: 40),
-        _watchButton(
-          icon: Icons.replay_outlined,
-          onTap: _resetTimer,
-        ),
+        _watchButton(icon: Icons.replay_outlined, onTap: _resetTimer),
       ],
     );
   }

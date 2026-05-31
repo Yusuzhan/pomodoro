@@ -12,7 +12,7 @@ class LcdDigit extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: Size(size, size * 1.6),
+      size: Size(size, size * 1.7),
       painter: _LcdPainter(digit: digit),
     );
   }
@@ -24,26 +24,45 @@ class LcdColon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: size * 0.5,
-            height: size * 0.5,
-            decoration: const BoxDecoration(color: _onColor, shape: BoxShape.circle),
-          ),
-          SizedBox(height: size * 0.5),
-          Container(
-            width: size * 0.5,
-            height: size * 0.5,
-            decoration: const BoxDecoration(color: _onColor, shape: BoxShape.circle),
-          ),
-        ],
-      ),
+    return CustomPaint(
+      size: Size(size, size * 1.6),
+      painter: _LcdColonPainter(),
     );
   }
+}
+
+class _LcdColonPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final pw = w * 0.55;
+    final ph = h * 0.2;
+    final corner = pw * 0.3;
+
+    final paint = Paint()
+      ..color = _onColor
+      ..style = PaintingStyle.fill;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH((w - pw) / 2, h * 0.10, pw, ph),
+        Radius.circular(corner),
+      ),
+      paint,
+    );
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH((w - pw) / 2, h * 0.90, pw, ph),
+        Radius.circular(corner),
+      ),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter old) => false;
 }
 
 class _LcdPainter extends CustomPainter {
