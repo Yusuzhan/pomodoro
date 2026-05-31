@@ -1,7 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pomodoro_flutter/screens/home_screen.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    WakelockPlus.enable();
+  }
+
   runApp(const PomodoroApp());
 }
 
