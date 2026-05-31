@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:pomodoro_flutter/widgets/circular_progress.dart';
+import 'package:pomodoro_flutter/widgets/lcd_digits.dart';
 
 const _FOCUS = 25 * 60;
 const _BREAK = 5 * 60;
